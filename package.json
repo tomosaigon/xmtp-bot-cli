@@ -1,6 +1,6 @@
 {
   "name": "xmtp-bot-cli",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Easy XMTP bot server with command line control",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -21,7 +21,10 @@
     "url": "git+https://github.com/tomosaigon/xmtp-bot-cli.git"
   },
   "keywords": [
-    "typescript"
+    "typescript",
+    "xmtp",
+    "bot",
+    "cli"
   ],
   "author": "Tomo Saigon",
   "license": "MIT",
@@ -46,6 +49,6 @@
   ],
   "dependencies": {
     "@xmtp/xmtp-js": "^10.2.1",
-    "iteracer": "^0.0.4"
+    "iteracer": "^0.0.5"
   }
 }

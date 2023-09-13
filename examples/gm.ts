@@ -8,7 +8,7 @@ botConfig.key = process.env.GM_XMTP_KEY;
 // botConfig.env = "dev";  
 console.log('Starting bot. Enter your custom greeting, e.g. gm (or "exit" to exit, "info" to see current greeting):');
 const bot = new XmtpBot(
-    (ctx: IContext, line: string) => {
+    async (ctx: IContext, line: string) => {
         if (line === 'exit') {
             return false;
         }
@@ -20,7 +20,7 @@ const bot = new XmtpBot(
         ctx.greeting = line;
         return true;
     },
-    (ctx: IContext, message: DecodedMessage) => {
+    async (ctx: IContext, message: DecodedMessage) => {
         if (ctx.client !== undefined && message.senderAddress === (ctx.client as Client).address) {
             return true;
         }

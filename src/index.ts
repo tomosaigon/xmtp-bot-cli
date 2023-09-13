@@ -78,8 +78,8 @@ export async function createClient(): Promise<Client> {
 export interface IContext {
     [key: string]: string | Client | undefined;
 }
-export interface IHandleLine { (ctx: IContext, line: string): boolean }
-export interface IHandleMessage { (ctx: IContext, message: DecodedMessage): boolean }
+export interface IHandleLine { (ctx: IContext, line: string): Promise<boolean> }
+export interface IHandleMessage { (ctx: IContext, message: DecodedMessage): Promise<boolean> }
 
 export class XmtpBot {
     private client: Promise<Client>;
@@ -117,7 +117,7 @@ export class XmtpBot {
     async getClient(): Promise<Client> {
         return this.client;
     }
-    
+
     /**
      * Runs the XMTP bot, handling input and messages.
      */

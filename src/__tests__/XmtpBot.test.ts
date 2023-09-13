@@ -31,7 +31,7 @@ describe('XmtpBot', () => {
   // Test constructor
   it('should create a XmtpBot instance and ctrl-d exit', async () => {
     const bot = new XmtpBot(
-      (ctx: IContext, line: string) => {
+      async (ctx: IContext, line: string) => {
           if (line === 'exit') {
               return false;
           }
@@ -43,7 +43,7 @@ describe('XmtpBot', () => {
           ctx.greeting = line;
           return true;
       },
-      (ctx: IContext, message: DecodedMessage) => {
+      async (ctx: IContext, message: DecodedMessage) => {
           if (ctx.client !== undefined && message.senderAddress === (ctx.client as Client).address) {
               return true;
           }

@@ -24,7 +24,7 @@ This is all you need to run a bot that replies "gm" to anyone sending it a messa
 
 ```
 const bot = new XmtpBot(
-    (ctx: IContext, line: string) => {
+    async (ctx: IContext, line: string) => {
         if (line === 'exit') {
             return false;
         }
@@ -36,7 +36,7 @@ const bot = new XmtpBot(
         ctx.greeting = line;
         return true;
     },
-    (ctx: IContext, message: DecodedMessage) => {
+    async (ctx: IContext, message: DecodedMessage) => {
         if (ctx.client !== undefined && message.senderAddress === (ctx.client as Client).address) {
             return true;
         }
