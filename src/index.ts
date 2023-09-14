@@ -87,12 +87,12 @@ export class XmtpBot {
     handleLine: IHandleLine;
     handleMessage: IHandleMessage;
 
-        /**
-     * Creates a new XmtpBot instance.
-     *
-     * @param {IHandleLine} _handleLine - The function to handle input lines.
-     * @param {IHandleMessage} _handleMessage - The function to handle XMTP messages.
-     */
+    /**
+ * Creates a new XmtpBot instance.
+ *
+ * @param {IHandleLine} _handleLine - The function to handle input lines.
+ * @param {IHandleMessage} _handleMessage - The function to handle XMTP messages.
+ */
     constructor(_handleLine: IHandleLine, _handleMessage: IHandleMessage) {
         this.handleLine = _handleLine;
         this.handleMessage = _handleMessage;
@@ -125,7 +125,10 @@ export class XmtpBot {
         // TODO raw stream not streamAllMessages, has return should be called if the interpreter detects that the stream won't be used anymore
         await iteracer(
             createLineReader('> '),
-            await (await this.getClient()).conversations.streamAllMessages(() => { throw "streamAllMessages error" }),
+            await (await this.getClient()).conversations.streamAllMessages(() => {
+                // Periodic "Stream connection closed. Resubscribing TypeError: fetch failed"
+                console.log("Skip XMTP Client.conversations.streamAllMessages exception");
+            }),
             (value: string) => this.handleLine(this.ctx, value),
             (value: DecodedMessage) => this.handleMessage(this.ctx, value),
             botConfig.doneLineReader,

@@ -1,4 +1,4 @@
-import { botConfig, XmtpBot, IContext } from "..";
+import { botConfig, XmtpBot, IContext } from "../src";
 import { Client, DecodedMessage } from "@xmtp/xmtp-js";
 
 if (process.env.GM_XMTP_KEY === undefined) {
