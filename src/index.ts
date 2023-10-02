@@ -1,15 +1,12 @@
-import { Client, DecodedMessage } from "@xmtp/xmtp-js";
+import { Client, DecodedMessage, type XmtpEnv } from "@xmtp/xmtp-js";
 import { Wallet } from "ethers";
 import { iteracer } from 'iteracer';
 import readline from 'readline';
 import { Readable } from 'stream';
 
-// in @xmtp/xmtp-js
-type XmtpEnv = "production" | "dev" | "local";
-
 export const botConfig = {
     key: '',
-    env: "production" as XmtpEnv,
+    env: (process.env.XMTP_ENV !== undefined ? process.env.XMTP_ENV : "production") as XmtpEnv,
     doneLineReader: () => console.log('Done for LineReader'),
     doneStreamAllMessages: () => console.log('Done for StreamAllMessages'),
     input: process.stdin as Readable,
@@ -76,14 +73,16 @@ export async function createClient(): Promise<Client> {
  * An object representing the context for the XMTP bot.
  */
 export interface IContext {
-    [key: string]: string | Client | undefined;
+    client: Client | undefined;
+    linePrompt: string;
+    [key: string]: string | boolean | object | undefined;
 }
 export interface IHandleLine { (ctx: IContext, line: string): Promise<boolean> }
 export interface IHandleMessage { (ctx: IContext, message: DecodedMessage): Promise<boolean> }
 
 export class XmtpBot {
     private client: Promise<Client>;
-    ctx: IContext = { client: undefined };
+    ctx: IContext = { client: undefined, linePrompt: '> ' };
     handleLine: IHandleLine;
     handleMessage: IHandleMessage;
 
@@ -103,7 +102,7 @@ export class XmtpBot {
         return new Promise((resolve) => {
             createClient().then((client) => {
                 console.log(`Listening on ${client.address}`);
-                this.ctx = { client };
+                this.ctx.client = client;
                 resolve(client);
             });
         });
@@ -124,10 +123,10 @@ export class XmtpBot {
     async run() {
         // TODO raw stream not streamAllMessages, has return should be called if the interpreter detects that the stream won't be used anymore
         await iteracer(
-            createLineReader('> '),
+            createLineReader(this.ctx.linePrompt),
             await (await this.getClient()).conversations.streamAllMessages(() => {
                 // Periodic "Stream connection closed. Resubscribing TypeError: fetch failed"
-                console.log("Skip XMTP Client.conversations.streamAllMessages exception");
+                console.log("onConnectionLost called: Skip XMTP Client.conversations.streamAllMessages exception");
             }),
             (value: string) => this.handleLine(this.ctx, value),
             (value: DecodedMessage) => this.handleMessage(this.ctx, value),
